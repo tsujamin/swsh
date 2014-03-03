@@ -5,19 +5,31 @@
 #include<unistd.h>
 #include<stdio.h>
 #include<sys/types.h>
+#include<string.h>
 #include "jobs.c"
         
 int main(int argc, char * argv[])
 {
+    char term_prompt[] = ">>> ";
     char input_buffer[80];
     
-    while(scanf("%s", input_buffer)) {
+    printf("%s", term_prompt);
+    
+    while(scanf("%s", input_buffer) > 0) {
         pid_t pid = vfork();
         if(pid == 0) {
             execlp(input_buffer, input_buffer, (char *) 0);
         } else if (pid < 0) {
-            return -1;
-        } 
+            printf("!!! ");
+        } else {
+            int child_exit;
+            wait(&child_exit);
+            
+            if(child_exit) 
+                printf("!!! ");
+            else 
+                printf("%s", term_prompt);
+        }
     }
     return 0;
 } 
