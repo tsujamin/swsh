@@ -12,12 +12,16 @@ OBJ_FILES = $(SRC_FILES:%.c=bin/%.o)
 INCLUDES = -I./includes
 
 $(OUT_BIN): $(OBJ_FILES)
-	$(CC) $(CFLAGS) $(INCLUDES) -o $(OUT_BIN) $(OBJ_FILES)
+	@echo Swag-piling $(OUT_BIN)
+	@ $(CC) $(CFLAGS) $(INCLUDES) -o $(OUT_BIN) $(OBJ_FILES)
+	@echo Swag-linked
 	
 bin/%.o: src/%.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	@echo Swag-piling $<.c
+	@ $(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
 	@rm $(OBJ_FILES)
 	@rm $(OUT_BIN)
- 
+	@echo No one shell
+	@echo Should have all that swagger
