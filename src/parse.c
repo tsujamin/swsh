@@ -4,8 +4,8 @@
  *  COMP2300 Assignment One 
  */
         
-#import <string.h>
-#import "parse.h"
+#include <string.h>
+#include "parse.h"
         
 struct CommandEval init_command(char input_buffer[])
 {        
