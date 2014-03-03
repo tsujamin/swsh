@@ -9,12 +9,11 @@
         
 struct CommandEval init_command(char input_buffer[])
 {        
-    char * input_token;
     char delim[] = " ";
     struct CommandEval cmd = {0};
-    printf("input_buffer: %s\n", input_buffer);
     
-    while ((input_token = strtok(input_buffer, delim))) {
+    char * input_token = strtok(input_buffer, delim);
+    do {
         if (!cmd.name) { //first token will be cmd name            
             cmd.name = input_token;
         } else if (!strcmp(input_token, "&")) {
@@ -24,12 +23,7 @@ struct CommandEval init_command(char input_buffer[])
             cmd.vargs[cmd.cargs] = input_token;
             cmd.cargs++;
         }
-    }
-    
-    printf("cmd: %s\n", cmd.name);
-    for(int i = 0; i < cmd.cargs; i++)
-        printf("arg: %s\n", cmd.vargs[i]);
-    printf("foreground: %d\n", cmd.foreground);
+    } while((input_token = strtok(0, delim)));
     
     return cmd;
 }

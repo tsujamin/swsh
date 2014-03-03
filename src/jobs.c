@@ -5,6 +5,7 @@
  */
         
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>        
 #include "jobs.h"
 #include "parse.h"
@@ -22,5 +23,6 @@ int vfork_eval(struct CommandEval cmd)
         wait(&child_exit);
         return child_exit;
     }
+    return 0;
 }     
      
