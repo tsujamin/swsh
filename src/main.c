@@ -1,11 +1,12 @@
-/*  swagger shell (swsh) 
-    Benjamin Roberts 2014
-    COMP2300 Assignment One */
+/*  
+ *  swagger shell (swsh) 
+ *  Benjamin Roberts 2014
+ *  COMP2300 Assignment One 
+ */
 
-#include<unistd.h>
-#include<stdio.h>
-#include<sys/types.h>
-#include<string.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/types.h>
 #include "jobs.c"
         
 int main(int argc, char * argv[])
