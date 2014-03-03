@@ -4,9 +4,10 @@
  *  COMP2300 Assignment One 
  */
 
+#include <sys/types.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <sys/types.h>
+#include <string.h>    
 #include "jobs.h"
         
 int main(int argc, char * argv[])
@@ -18,6 +19,7 @@ int main(int argc, char * argv[])
     printf(">>> ");
     
     while(fgets(input_buffer, 80, stdin)) {
+        strtok(input_buffer, "\n"); //remove trailing newline
         cmd = init_command(input_buffer);
         eval_ret = vfork_eval(cmd);
         
