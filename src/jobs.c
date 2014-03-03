@@ -31,7 +31,7 @@ int vfork_eval(struct CommandEval cmd)
     pid_t pid = vfork();
     
     if(pid == 0) {
-        execlp(cmd.name, cmd.name, *cmd.vargs, (char *) 0);
+        execvp(cmd.name, cmd.vargs);
         exit(-1);
     } else if (pid < 0) {
         return -1;
