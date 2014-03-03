@@ -26,3 +26,11 @@ clean:
 	@rm $(OUT_BIN)
 	@echo No one shell
 	@echo Should have all that swagger
+	
+install: $(OUT_BIN)
+	@echo Swag-stalling $(OUT_BIN)
+	@cp $< /usr/bin/$(OUT_BIN)
+
+uninstall:
+	@echo Swag-moving $(OUT_BIN)
+	@rm /usr/bin/$(OUT_BIN)
