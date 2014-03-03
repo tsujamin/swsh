@@ -7,30 +7,24 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/types.h>
-#include "jobs.c"
+#include "jobs.h"
         
 int main(int argc, char * argv[])
 {
-    char term_prompt[] = ">>> ";
     char input_buffer[80];
+    int eval_ret = 0;
     
-    printf("%s", term_prompt);
+    printf(">>> ");
     
     while(scanf("%s", input_buffer) > 0) {
-        pid_t pid = vfork();
-        if(pid == 0) {
-            execlp(input_buffer, input_buffer, (char *) 0);
-        } else if (pid < 0) {
+        eval_ret = vfork_eval(input_buffer);
+        
+        if (eval_ret < 0)
+            printf("??? ");
+        else if (eval_ret > 0)
             printf("!!! ");
-        } else {
-            int child_exit;
-            wait(&child_exit);
-            
-            if(child_exit) 
-                printf("!!! ");
-            else 
-                printf("%s", term_prompt);
-        }
+        else
+            printf(">>> ");
     }
     return 0;
 } 
