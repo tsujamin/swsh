@@ -17,7 +17,7 @@ struct CommandEval init_command(char input_buffer[])
         if (!cmd.name) { //first token will be cmd name            
             cmd.name = input_token;
         } else if (!strcmp(input_token, "&")) {
-            cmd.foreground = 1;
+            cmd.background = 1;
             break;
         } else {
             cmd.vargs[cmd.cargs] = input_token;

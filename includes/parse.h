@@ -10,7 +10,7 @@ struct CommandEval {
     char * name;
     char * vargs[10];
     int cargs;
-    int foreground;
+    int background;
 };
 
 /*
