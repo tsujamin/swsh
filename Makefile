@@ -7,7 +7,7 @@ CFLAGS = -g -Wall
 OUT_BIN = swsh
 
 #Sources
-SRC_FILES = main.c jobs.c
+SRC_FILES = $(shell ls src) 
 OBJ_FILES = $(SRC_FILES:%.c=bin/%.o)
 INCLUDES = -I./includes
 

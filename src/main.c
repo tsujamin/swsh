@@ -13,11 +13,13 @@ int main(int argc, char * argv[])
 {
     char input_buffer[80];
     int eval_ret = 0;
+    struct CommandEval cmd;
     
     printf(">>> ");
     
-    while(scanf("%s", input_buffer) > 0) {
-        eval_ret = vfork_eval(input_buffer);
+    while(fgets(input_buffer, 80, stdin)) {
+        cmd = init_command(input_buffer);
+        eval_ret = vfork_eval(cmd);
         
         if (eval_ret < 0)
             printf("??? ");
