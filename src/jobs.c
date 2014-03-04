@@ -8,14 +8,14 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <stdlib.h>     
-#include <string.h>        
+#include <string.h>
 #include "jobs.h"
 #include "parse.h"
 
 int repl_eval(struct CommandEval cmd)
 {
     if(!strcmp(cmd.name, "cd") && (cmd.cargs)) {
-        chdir(cmd.vargs[0]);
+        chdir(cmd.vargs[1]);
         return 0;
     } else if (cmd.name){
         return vfork_eval(cmd);
