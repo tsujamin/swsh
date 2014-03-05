@@ -1,20 +1,21 @@
-/* 
- *  swagger shell (swsh) 
+/*
+ *  swagger shell (swsh)
  *  Benjamin Roberts 2014
- *  COMP2300 Assignment One 
+ *  COMP2300 Assignment One
  */
-        
+
 #include <string.h>
+#include <stdio.h>
 #include "parse.h"
-        
+
 struct CommandEval init_command(char input_buffer[])
-{        
+{
     char delim[] = " ";
     struct CommandEval cmd = {0};
-    
+
     char * input_token = strtok(input_buffer, delim);
     do {
-        if (!cmd.name) { //first token will be cmd name            
+        if (!cmd.name) { //first token will be cmd name
             cmd.name = cmd.vargs[0] = input_token;
             cmd.cargs++;
         } else if (!strcmp(input_token, "&")) {
@@ -25,7 +26,7 @@ struct CommandEval init_command(char input_buffer[])
             cmd.cargs++;
         }
     } while((input_token = strtok(0, delim)));
-    
+
     return cmd;
 }
 
@@ -34,12 +35,22 @@ int delim_count(char str[], char delim)
 {
     if (str == 0)
         return -1;
-    
+
     int d_count = 0;
     for(int i = 0; str[i] != '\0'; i++) {
         if (str[i] == delim)
                 d_count++;
     }
-    return d_count;    
-}       
-        
+    return d_count;
+}
+
+void print_command_eval(struct CommandEval cmd)
+{
+    printf("DEBUG (command_eval): ");
+    printf("NAME: %s, ", cmd.name);
+    printf("VARGS (%d): [ ", cmd.cargs);
+    for(int i = 0; i < cmd.cargs; i++)
+      printf("%s ", cmd.vargs[i]);
+    printf("], BG: %d\n", cmd.background);
+}
+

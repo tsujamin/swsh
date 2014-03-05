@@ -4,6 +4,6 @@
  *  COMP2300 Assignment One
  */
 
- #include "debug.h"
+#include "debug.h"
 
 int DEBUG = 0;
