@@ -16,16 +16,15 @@ int main(int argc, char * argv[])
 {
     parse_swsh_flags(argc, argv);
 
-    char input_buffer[80];
     int eval_ret = 0;
     struct CommandEval cmd;
 
     printf(">>> ");
 
-    while(fgets(input_buffer, 80, stdin)) {
-        strtok(input_buffer, "\n"); //remove trailing newline
-        cmd = init_command(input_buffer);
+    while(1) {
+        cmd = repl_read();
         eval_ret = repl_eval(cmd);
+        free_command_eval(cmd);
 
         if (eval_ret < 0)
             printf("??? ");

@@ -18,16 +18,16 @@ int repl_eval(struct CommandEval cmd)
 {
     if (DEBUG)
         print_command_eval(cmd);
-
-    if(!strcmp(cmd.name, "cd") && (cmd.cargs)) {
+    if (!*cmd.name) {
+        exit(0);
+    } else if(!strcmp(cmd.name, "cd") && (cmd.cargs)) {
         chdir(cmd.vargs[1]);
         return 0;
     } else if (cmd.name){
         return vfork_eval(cmd);
-    } else {
-        exit(0);
     }
 }
+
 
 
 int vfork_eval(struct CommandEval cmd)
