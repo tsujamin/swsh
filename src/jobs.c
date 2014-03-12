@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <string.h>
 #include "jobs.h"
@@ -39,10 +40,10 @@ int repl_eval(struct CommandEval * cmd)
 int vfork_eval(struct CommandEval * cmd)
 {
     int child_exit = 0;
-    pid_t pid = fork();
+    pid_t pid = vfork();
 
     if(pid == 0) {
-        execvp(cmd->name, cmd->vargs);
+        proc_exec(cmd);
         exit(-1);
     } else if (pid < 0) {
         return -1;
@@ -52,4 +53,27 @@ int vfork_eval(struct CommandEval * cmd)
     }
     return 0;
 }
+
+void proc_exec(struct CommandEval * cmd)
+{
+    pid_t pid = getpid();
+    if (*cmd->pgid == 0)
+        *cmd->pgid = pid;
+    setpgid(pid, *cmd->pgid);
+
+    signal(SIGINT, SIG_DFL);
+    signal(SIGQUIT, SIG_DFL);
+    signal(SIGTSTP, SIG_DFL);
+    signal(SIGTTIN, SIG_DFL);
+    signal(SIGTTOU, SIG_DFL);
+    signal(SIGCHLD, SIG_DFL);
+
+    if (!cmd->next && !cmd->background)
+        tcsetpgrp(STDIN_FILENO, *cmd->pgid);
+
+    execvp(cmd->name, cmd->vargs);
+}
+
+
+
 

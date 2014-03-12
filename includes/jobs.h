@@ -14,10 +14,15 @@
 int repl_eval(struct CommandEval * cmd);
 
 /*
- * executes the provided command (blocking the swsh instance).
- * returns -1 if fork fails, return code of child otherwise
+ * vforks the shell process and calls proc_exec as the child
  */
 int vfork_eval(struct CommandEval * cmd);
+
+/*
+ * Sets the pgid of the child process, assigns it to
+ * the shared job pgid, sets default signals and exec's the cmd
+ */
+void proc_exec(struct CommandEval * cmd);
 
 #endif /* JOBS_H */
 

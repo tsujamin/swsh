@@ -11,6 +11,7 @@ struct CommandEval {
     char *  vargs[10];
     int     cargs;
     int     background;
+    int  *  pgid;
     struct CommandEval * next;
 
 };

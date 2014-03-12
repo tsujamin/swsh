@@ -33,10 +33,12 @@ struct CommandEval * init_job(char input_buffer[])
     char * command_token = strtok_r(input_buffer, "|", &strtok_job);
     struct CommandEval * job_head = init_command(command_token);
     struct CommandEval * job_last = job_head;
+    job_head->pgid = calloc(1, sizeof(int));
 
     while((command_token = strtok_r(0, "|", &strtok_job))) {
       job_last->next = init_command(command_token);
       job_last = job_last->next;
+      job_last->pgid = job_head->pgid;
     }
 
     return job_head;
@@ -100,6 +102,8 @@ void free_command_eval(struct CommandEval * cmd)
         free(cmd->vargs[i]);
     if(cmd->next)
       free_command_eval(cmd->next);
+    else
+      free(cmd->pgid);
     free(cmd);
 }
 
