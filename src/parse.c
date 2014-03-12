@@ -45,19 +45,19 @@ struct CommandEval * init_job(char input_buffer[])
 struct CommandEval * init_command(char input_buffer[])
 {
     char * strtok_cmd;
-    struct CommandEval * cmd = malloc(sizeof(struct CommandEval));
+    struct CommandEval * cmd = calloc(1, sizeof(struct CommandEval));
 
     char * input_token = strtok_r(input_buffer, " ", &strtok_cmd);
     do {
         if (!cmd->name) { //first token will be cmd name
-            cmd->vargs[0] = cmd->name = malloc(strlen(input_token)+1);
+            cmd->vargs[0] = cmd->name = calloc(1, strlen(input_token)+1);
             strcpy(cmd->vargs[0], input_token);
             cmd->cargs++;
         } else if (!strcmp(input_token, "&")) {
             cmd->background = 1;
             break;
         } else if (strlen(input_token)) {
-            cmd->vargs[cmd->cargs] = malloc(strlen(input_token)+1);
+            cmd->vargs[cmd->cargs] = calloc(1, strlen(input_token)+1);
             strcpy(cmd->vargs[cmd->cargs], input_token);
             cmd->cargs++;
         }

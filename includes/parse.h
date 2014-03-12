@@ -47,7 +47,8 @@ int delim_count(char str[], char delim);
 void print_command_eval(struct CommandEval *cmd);
 
 /*
- * deallocates malloced memory in CommandEval
+ * deallocates calloced memory in CommandEval and its linked
+ * counterparts
  */
 void free_command_eval(struct CommandEval * cmd);
 
