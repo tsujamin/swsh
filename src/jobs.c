@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 #include "jobs.h"
 #include "parse.h"
 #include "debug.h"
@@ -18,13 +19,13 @@ int repl_eval(struct CommandEval cmd)
 {
     if (DEBUG)
         print_command_eval(cmd);
-    if (!*cmd.name) {
-        exit(0);
-    } else if(!strcmp(cmd.name, "cd") && (cmd.cargs)) {
+    if(!strcmp(cmd.name, "cd") && (cmd.cargs)) {
         chdir(cmd.vargs[1]);
         return 0;
     } else if (cmd.name){
         return vfork_eval(cmd);
+    } else {
+      exit(0);
     }
 }
 

@@ -7,10 +7,11 @@
 #ifndef PARSE_H
 #define PARSE_H
 struct CommandEval {
-    char * name;
-    char * vargs[10];
-    int cargs;
-    int background;
+    char *  name;
+    char *  vargs[10];
+    int     cargs;
+    int     background;
+
 };
 
 /*

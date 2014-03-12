@@ -5,3 +5,6 @@ https://www.kernel.org/doc/Documentation/CodingStyle
 https://stackoverflow.com/questions/2245962/is-there-an-alternative-for-flex-bison-that-is-usable-on-8-bit-embedded-systems/2336769#2336769
 https://stackoverflow.com/questions/1139271/makefiles-with-source-files-in-different-directories
 http://www.yolinux.com/TUTORIALS/ForkExecProcesses.html
+
+6/3/14:
+http://mywiki.wooledge.org/BashParser
