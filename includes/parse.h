@@ -22,13 +22,15 @@ struct CommandEval {
 struct CommandEval * repl_read();
 
 /*
- *
+ * parses command line input tokenising it on '|' and
+ * parsing it with init_command before returning
+ * the head of a CommandEval list
  */
-struct CommandEval init_job(char input_bugger[]);
+struct CommandEval * init_job(char input_bugger[]);
 
 
 /*
- * parses the input and returns a  a struct with the name of
+ * parses the command string and returns a struct with the name of
  * to eval, its parameters and foreground status (whether the
  * command was '&' appended)
  */
