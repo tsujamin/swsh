@@ -11,13 +11,13 @@
  * base function of the eval stage of the read-eval-print loop.
  * handles built-ins
  */
-int repl_eval(struct CommandEval cmd);
+int repl_eval(struct CommandEval * cmd);
 
 /*
  * executes the provided command (blocking the swsh instance).
  * returns -1 if fork fails, return code of child otherwise
  */
-int vfork_eval(struct CommandEval cmd);
+int vfork_eval(struct CommandEval * cmd);
 
 #endif /* JOBS_H */
 

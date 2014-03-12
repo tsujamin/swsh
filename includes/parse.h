@@ -11,6 +11,7 @@ struct CommandEval {
     char *  vargs[10];
     int     cargs;
     int     background;
+    struct CommandEval * next;
 
 };
 
@@ -18,14 +19,20 @@ struct CommandEval {
  * entry point for the read stage of the repl loop.
  * returns a CommandEval stuct.
  */
-struct CommandEval repl_read();
+struct CommandEval * repl_read();
+
+/*
+ *
+ */
+struct CommandEval init_job(char input_bugger[]);
+
 
 /*
  * parses the input and returns a  a struct with the name of
  * to eval, its parameters and foreground status (whether the
  * command was '&' appended)
  */
-struct CommandEval init_command(char input_buffer[]);
+struct CommandEval * init_command(char input_buffer[]);
 
 /*
  * counts the number of deliminating characters in the input string
@@ -35,12 +42,12 @@ int delim_count(char str[], char delim);
 /*
  * print a debug representation of a CommandEval struct
  */
-void print_command_eval(struct CommandEval cmd);
+void print_command_eval(struct CommandEval *cmd);
 
 /*
  * deallocates malloced memory in CommandEval
  */
-void free_command_eval(struct CommandEval cmd);
+void free_command_eval(struct CommandEval * cmd);
 
 #endif /* PARSE_H */
 

@@ -24,7 +24,7 @@ int main(int argc, char * argv[])
     parse_swsh_flags(argc, argv);
 
     int eval_ret = 0;
-    struct CommandEval cmd;
+    struct CommandEval * cmd;
 
     printf(">>> ");
 
