@@ -16,16 +16,22 @@
 
 int repl_eval(struct CommandEval * cmd)
 {
+    int ret_status = 0;
+
     if (DEBUG)
         print_command_eval(cmd);
-    if(!strcmp(cmd->name, "cd") && (cmd->cargs)) {
-        chdir(cmd->vargs[1]);
-        return 0;
-    } else if (cmd->name){
-        return vfork_eval(cmd);
-    } else {
-      exit(0);
+
+    for(; cmd; cmd = cmd->next) {
+        if(!strcmp(cmd->name, "cd") && (cmd->cargs)) {
+            chdir(cmd->vargs[1]);
+        } else if (cmd->name) {
+            ret_status = vfork_eval(cmd);
+        } else {
+            exit(0);
+        }
     }
+
+    return ret_status;
 }
 
 
@@ -33,7 +39,7 @@ int repl_eval(struct CommandEval * cmd)
 int vfork_eval(struct CommandEval * cmd)
 {
     int child_exit = 0;
-    pid_t pid = vfork();
+    pid_t pid = fork();
 
     if(pid == 0) {
         execvp(cmd->name, cmd->vargs);
