@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "parse.h"
 #include "debug.h"
 
@@ -29,18 +30,25 @@ struct CommandEval * repl_read()
 
 struct CommandEval * init_job(char input_buffer[])
 {
-    char *strtok_job;
+    char * strtok_job;
     char * command_token = strtok_r(input_buffer, "|", &strtok_job);
+    int cmd_pipe[2];
+
     struct CommandEval * job_head = init_command(command_token);
     struct CommandEval * job_last = job_head;
     job_head->pgid = calloc(1, sizeof(int));
+    job_head->stdin = STDIN_FILENO;
 
     while((command_token = strtok_r(0, "|", &strtok_job))) {
       job_last->next = init_command(command_token);
+      if(pipe(cmd_pipe) >= 0) {
+          job_last->stdout = cmd_pipe[1];
+          job_last->next->stdin = cmd_pipe[0];
+      }
       job_last = job_last->next;
       job_last->pgid = job_head->pgid;
     }
-
+    job_last->stdout = STDOUT_FILENO;
     return job_head;
 }
 
@@ -90,8 +98,8 @@ void print_command_eval(struct CommandEval * cmd)
         printf("VARGS (%d): [ ", cmd->cargs);
         for(int i = 0; i < cmd->cargs; i++)
             printf("%s ", cmd->vargs[i]);
-        printf("], BG: %d\n", cmd->background);
-
+        printf("], BG: %d", cmd->background);
+        printf("STDIN: %d, STDOUT: %d\n", cmd->stdin, cmd->stdout);
         cmd = cmd->next;
     } while(cmd);
 }

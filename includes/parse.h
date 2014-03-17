@@ -12,6 +12,8 @@ struct CommandEval {
     int     cargs;
     int     background;
     int  *  pgid;
+    int     stdin;
+    int     stdout;
     struct CommandEval * next;
 
 };
@@ -25,7 +27,7 @@ struct CommandEval * repl_read();
 /*
  * parses command line input tokenising it on '|' and
  * parsing it with init_command before returning
- * the head of a CommandEval list
+ * the head of a CommandEval list. Also responsible for piping
  */
 struct CommandEval * init_job(char input_bugger[]);
 
