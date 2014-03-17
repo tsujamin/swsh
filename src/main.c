@@ -15,8 +15,9 @@
 #include "jobs.h"
 #include "flags.h"
 
-int root_pgid;
+int root_pgid, root_term;
 struct termios termios_modes;
+
 
 int main(int argc, char * argv[])
 {
@@ -56,6 +57,10 @@ void init_shell()
     //Become our own process group
     root_pgid = getpid();
     setpgid(root_pgid, root_pgid);
+
+    //Root store root terminal
+    root_term = STDIN_FILENO;
+
 
     //Take control of the terminal
     tcsetpgrp(STDIN_FILENO, root_pgid);

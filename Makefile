@@ -1,7 +1,7 @@
 #Use gcc to compile
 CC = gcc
 #Set debug symbols (-g) and all warnings (-Wall)
-CFLAGS = -g -Wall -std=c99
+CFLAGS = -g -Wall -std=gnu99
 
 #Executable name
 OUT_BIN = swsh

@@ -16,7 +16,7 @@ int repl_eval(struct CommandEval * cmd);
 /*
  * vforks the shell process and calls proc_exec as the child
  */
-int vfork_eval(struct CommandEval * cmd);
+int fork_eval(struct CommandEval * cmd);
 
 /*
  * Sets the pgid of the child process, assigns it to

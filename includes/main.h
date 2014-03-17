@@ -8,6 +8,12 @@
 #define MAIN_H
 
 /*
+ * Externally accessible properties of the root
+ * shell process.
+ */
+extern int root_pgid, root_term;
+
+/*
  * Main call of the shell, contains the REPL loop
  */
 int main(int argc, char * argv[]);

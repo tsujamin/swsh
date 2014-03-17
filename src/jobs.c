@@ -13,6 +13,7 @@
 #include "jobs.h"
 #include "parse.h"
 #include "debug.h"
+#include "main.h"
 
 
 int repl_eval(struct CommandEval * cmd)
@@ -26,7 +27,7 @@ int repl_eval(struct CommandEval * cmd)
         if(!strcmp(cmd->name, "cd") && (cmd->cargs)) {
             chdir(cmd->vargs[1]);
         } else if (cmd->name) {
-            ret_status = vfork_eval(cmd);
+            ret_status = fork_eval(cmd);
         } else {
             exit(0);
         }
@@ -37,10 +38,10 @@ int repl_eval(struct CommandEval * cmd)
 
 
 
-int vfork_eval(struct CommandEval * cmd)
+int fork_eval(struct CommandEval * cmd)
 {
     int child_exit = 0;
-    pid_t pid = vfork();
+    pid_t pid = fork();
 
     if(pid == 0) {
         proc_exec(cmd);
@@ -48,7 +49,15 @@ int vfork_eval(struct CommandEval * cmd)
     } else if (pid < 0) {
         return -1;
     } else {
-        wait(&child_exit);
+        if (*cmd->pgid == 0)
+            *cmd->pgid = pid;
+        setpgid(pid, *cmd->pgid);
+
+        if(!cmd->next && !cmd->background) {
+            tcsetpgrp(root_term, *cmd->pgid);
+            waitpid(-*cmd->pgid, &child_exit, WUNTRACED);
+            tcsetpgrp(root_term, root_pgid);
+        }
         return child_exit;
     }
     return 0;
@@ -68,8 +77,8 @@ void proc_exec(struct CommandEval * cmd)
     signal(SIGTTOU, SIG_DFL);
     signal(SIGCHLD, SIG_DFL);
 
-    if (!cmd->next && !cmd->background)
-        tcsetpgrp(STDIN_FILENO, *cmd->pgid);
+    if(!cmd->next && !cmd->background)
+        tcsetpgrp(root_term, *cmd->pgid);
 
     execvp(cmd->name, cmd->vargs);
 }
