@@ -53,6 +53,11 @@ int fork_eval(struct CommandEval * cmd)
             *cmd->pgid = pid;
         setpgid(pid, *cmd->pgid);
 
+        if (cmd->stdin != STDIN_FILENO)
+          close(cmd->stdin);
+        if (cmd->stdout != STDOUT_FILENO)
+          close(cmd->stdout);
+
         if(!cmd->next && !cmd->background) {
             tcsetpgrp(root_term, *cmd->pgid);
             waitpid(-*cmd->pgid, &child_exit, WUNTRACED);
@@ -76,6 +81,16 @@ void proc_exec(struct CommandEval * cmd)
     signal(SIGTTIN, SIG_DFL);
     signal(SIGTTOU, SIG_DFL);
     signal(SIGCHLD, SIG_DFL);
+
+    if(cmd->stdin != STDIN_FILENO) {
+        dup2(cmd->stdin, STDIN_FILENO);
+        close(cmd->stdin);
+    }
+
+    if(cmd->stdout != STDOUT_FILENO) {
+        dup2(cmd->stdout, STDOUT_FILENO);
+        close(cmd->stdout);
+    }
 
     if(!cmd->next && !cmd->background)
         tcsetpgrp(root_term, *cmd->pgid);

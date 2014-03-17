@@ -15,12 +15,16 @@ int repl_eval(struct CommandEval * cmd);
 
 /*
  * vforks the shell process and calls proc_exec as the child
+ * Sets the childs pgid, closes the parent pipes and waits ones
+ * final foreground task
  */
 int fork_eval(struct CommandEval * cmd);
 
 /*
  * Sets the pgid of the child process, assigns it to
- * the shared job pgid, sets default signals and exec's the cmd
+ * the shared job pgid, sets default signals, duplicates relevant
+ * file descriptors (closing useless ones to allow EOF to pipe)
+ * and exec's the cmd
  */
 void proc_exec(struct CommandEval * cmd);
 
