@@ -11,7 +11,7 @@
 void parse_swsh_flags(int argc, char * argv[])
 {
     for(int i = 1; i < argc; i++) {
-        if(!strcmp(argv[i], "-d")) {
+        if(!strcmp(argv[i], "-d") || ~strcmp(argv[i], "--debug")) {
             DEBUG = 1;
         }
     }

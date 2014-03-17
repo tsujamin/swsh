@@ -15,9 +15,9 @@
 #include "jobs.h"
 #include "flags.h"
 
+
 int root_pgid, root_term;
 struct termios termios_modes;
-
 
 int main(int argc, char * argv[])
 {
@@ -29,6 +29,7 @@ int main(int argc, char * argv[])
 
     printf(">>> ");
 
+    //Read-Print-Eval loop
     while(1) {
         cmd = repl_read();
         eval_ret = repl_eval(cmd);

@@ -39,12 +39,17 @@ struct CommandEval * init_job(char input_buffer[])
     job_head->pgid = calloc(1, sizeof(int));
     job_head->stdin = STDIN_FILENO;
 
+    //Tokenize for piped commands
     while((command_token = strtok_r(0, "|", &strtok_job))) {
       job_last->next = init_command(command_token);
+
+      //set up stdin/out pipes between last and next cmd
       if(pipe(cmd_pipe) >= 0) {
           job_last->stdout = cmd_pipe[1];
           job_last->next->stdin = cmd_pipe[0];
       }
+
+      //set shared pgid and update last cmd
       job_last = job_last->next;
       job_last->pgid = job_head->pgid;
     }
@@ -63,10 +68,10 @@ struct CommandEval * init_command(char input_buffer[])
             cmd->vargs[0] = cmd->name = calloc(1, strlen(input_token)+1);
             strcpy(cmd->vargs[0], input_token);
             cmd->cargs++;
-        } else if (!strcmp(input_token, "&")) {
+        } else if (!strcmp(input_token, "&")) { //check for BG task
             cmd->background = 1;
             break;
-        } else if (strlen(input_token)) {
+        } else if (strlen(input_token)) { //add argument to cmd
             cmd->vargs[cmd->cargs] = calloc(1, strlen(input_token)+1);
             strcpy(cmd->vargs[cmd->cargs], input_token);
             cmd->cargs++;
@@ -111,7 +116,7 @@ void free_command_eval(struct CommandEval * cmd)
     if(cmd->next)
       free_command_eval(cmd->next);
     else
-      free(cmd->pgid);
+      free(cmd->pgid); //Only free the pgid on the last cmd (as it is shared)
     free(cmd);
 }
 
