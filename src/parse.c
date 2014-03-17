@@ -103,7 +103,7 @@ void print_command_eval(struct CommandEval * cmd)
         printf("VARGS (%d): [ ", cmd->cargs);
         for(int i = 0; i < cmd->cargs; i++)
             printf("%s ", cmd->vargs[i]);
-        printf("], BG: %d", cmd->background);
+        printf("], BG: %d ", cmd->background);
         printf("STDIN: %d, STDOUT: %d\n", cmd->stdin, cmd->stdout);
         cmd = cmd->next;
     } while(cmd);
