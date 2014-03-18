@@ -6,7 +6,9 @@ COMP2300 Assignment One
 
 what is swsh?
 -------------
+swsh is a basic, low overhead, job controling command line shell. It was written as an assignment submission and as a general test of the authors C skills.
 
+In the future I hope to keep it POSIX compliant and use it as a test bench for shell implementation experiments.
 
 
 what can swsh do?
@@ -34,7 +36,7 @@ using swsh
 
 license
 -------
-
+This software is licensed under the GNU General Public License v3. A copy of the license should have come bundled with the source code. In the event that a copy wasnt bundled please refer to [http://www.gnu.org/licenses/gpl-3.0.txt]()
 
 
 the swsh internals
