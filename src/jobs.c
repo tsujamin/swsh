@@ -6,6 +6,7 @@
 
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <stdio.h>
 #include <unistd.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -14,6 +15,15 @@
 #include "parse.h"
 #include "debug.h"
 #include "main.h"
+
+/*
+ * An array to store the job stack in. Any process group which
+ * is suspended is added to this array (if doing so doesnt overflow.
+ */
+#define MAX_SUSP_JOBS 10
+pid_t susp_jobs[MAX_SUSP_JOBS];
+int   susp_jobs_count = 0;
+
 
 
 int repl_eval(struct CommandEval * cmd)
@@ -27,6 +37,10 @@ int repl_eval(struct CommandEval * cmd)
     for(; cmd; cmd = cmd->next) {
         if(!strcmp(cmd->name, "cd") && (cmd->cargs)) {
             chdir(cmd->vargs[1]);
+        } else if (!strcmp(cmd->name, "resume")) {
+            resume_job();
+        } else if (!strcmp(cmd->name, "jobs")) {
+            print_jobs();
         } else if (cmd->name) {
             ret_status = fork_eval(cmd);
         } else {
@@ -41,7 +55,6 @@ int repl_eval(struct CommandEval * cmd)
 
 int fork_eval(struct CommandEval * cmd)
 {
-    int child_exit = 0;
     pid_t pid = fork();
 
     if(pid == 0) {
@@ -57,17 +70,17 @@ int fork_eval(struct CommandEval * cmd)
 
         //close unused parent pipes (allows EOF to pipe)
         if (cmd->stdin != STDIN_FILENO)
-          close(cmd->stdin);
+            close(cmd->stdin);
         if (cmd->stdout != STDOUT_FILENO)
-          close(cmd->stdout);
+            close(cmd->stdout);
 
-        //only wait/grant control if non-background final cmd
-        if(!cmd->next && !cmd->background) {
-            tcsetpgrp(root_term, *cmd->pgid);
-            waitpid(-*cmd->pgid, &child_exit, WUNTRACED);
-            tcsetpgrp(root_term, root_pgid);
-        }
-        return child_exit;
+        //wait or suspend final cmd if nessecary
+        if(!cmd->next && !cmd->background)
+            fg_wait_job(*cmd->pgid);
+        else if(!cmd->next)
+            suspend_job(*cmd->pgid);
+
+        return 0;
     }
     return 0;
 }
@@ -104,6 +117,55 @@ void proc_exec(struct CommandEval * cmd)
         tcsetpgrp(root_term, *cmd->pgid);
 
     execvp(cmd->name, cmd->vargs);
+}
+
+void print_jobs()
+{
+    if(susp_jobs_count > 0) {
+        //iterate through job list in descending order
+        for(int i = susp_jobs_count - 1; i >= 0; i--)
+            printf("%d\n", susp_jobs[i]);
+    } else {
+        printf("No jobs in stack\n");
+    }
+}
+
+
+void suspend_job(pid_t pgid)
+{
+    //add job to susp_jobs list before inc'ing count
+    if(susp_jobs_count < MAX_SUSP_JOBS)
+        susp_jobs[++susp_jobs_count] = pgid;
+    else
+        printf("Job stack full\n");
+}
+
+void resume_job()
+{
+    if(susp_jobs_count > 0) {
+        susp_jobs_count--; //pop job
+        kill (susp_jobs[susp_jobs_count], SIGCONT); //send continue signal
+        fg_wait_job(susp_jobs[susp_jobs_count]);
+    } else {
+        printf("No jobs in stack\n");
+    }
+
+}
+
+void fg_wait_job(pid_t pgid)
+{
+    int child_status = 0;
+
+    //give job the terminal
+    tcsetpgrp(root_term, pgid);
+
+    //wait and suspend if stopped
+    waitpid(-pgid, &child_status, WUNTRACED);
+    if(WIFSTOPPED(child_status))
+        suspend_job(pgid);
+
+    //take back terminal
+    tcsetpgrp(root_term, root_pgid);
 }
 
 
