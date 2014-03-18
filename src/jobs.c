@@ -134,22 +134,25 @@ void print_jobs()
 void suspend_job(pid_t pgid)
 {
     //add job to susp_jobs list before inc'ing count
-    if(susp_jobs_count < MAX_SUSP_JOBS)
-        susp_jobs[++susp_jobs_count] = pgid;
-    else
+    if(susp_jobs_count < MAX_SUSP_JOBS) {
+        susp_jobs[susp_jobs_count] = pgid;
+        susp_jobs_count++;
+    } else {
         printf("Job stack full\n");
+    }
 }
 
 void resume_job()
 {
     if(susp_jobs_count > 0) {
         susp_jobs_count--; //pop job
-        kill (susp_jobs[susp_jobs_count], SIGCONT); //send continue signal
+
+        //continue job and foreground wait it
+        kill (susp_jobs[susp_jobs_count], SIGCONT);
         fg_wait_job(susp_jobs[susp_jobs_count]);
     } else {
         printf("No jobs in stack\n");
     }
-
 }
 
 void fg_wait_job(pid_t pgid)
