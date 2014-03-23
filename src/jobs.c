@@ -3,7 +3,7 @@
  *  Benjamin Roberts 2014
  *  COMP2300 Assignment One
  */
-
+#include "main.h"
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <stdio.h>
@@ -14,7 +14,6 @@
 #include "jobs.h"
 #include "parse.h"
 #include "debug.h"
-#include "main.h"
 
 /*
  * An array to store the job stack in. Any process group which
