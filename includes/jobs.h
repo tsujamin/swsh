@@ -51,9 +51,10 @@ void print_jobs();
  * Responsible for setting the terminal controlling pgid, waiting
  * on the pgid, suspending it if stopped and restoring terminal control.
  * only nessecary if resuming a suspended job or upon reaching a
- * final foreground command
+ * final foreground command.
+ * Returns 0 if job completes, 1 otherwise.
  */
-void fg_wait_job(pid_t pgid);
+int fg_wait_job(pid_t pgid, char * name);
 
 /*
  * Pops a job from the job stack, continues and fg_wait_jobs it.
@@ -64,7 +65,7 @@ void resume_job();
 /*
  * Adds a job to the job stack, prints error if full stack
  */
-void suspend_job(pid_t pgid);
+void suspend_job(pid_t pgid, char * name);
 
 /*
  * Flips the order of jobs on the stack
