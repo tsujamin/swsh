@@ -15,6 +15,12 @@
 extern char * SWSH_BUILT_INS[];
 
 /*
+ * The PATH variable used by swsh in the executiona nd lookup
+ * of binaries
+ */
+extern char SWSH_PATH[];
+
+/*
  * Base function of the eval stage of the read-eval-print loop.
  * handles built-ins
  */

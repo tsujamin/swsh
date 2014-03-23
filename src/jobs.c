@@ -26,6 +26,7 @@ int   susp_jobs_count = 0;
 
 char * SWSH_BUILT_INS[] = {"cd", "resume", "jobs", 0};
 
+char SWSH_PATH[] = "/bin:/usr/bin:.";
 
 int repl_eval(struct CommandEval * cmd)
 {
@@ -117,7 +118,7 @@ void proc_exec(struct CommandEval * cmd)
     if(!cmd->next && !cmd->background)
         tcsetpgrp(root_term, *cmd->pgid);
 
-    execvp(cmd->name, cmd->vargs);
+    execvP(cmd->name, SWSH_PATH, cmd->vargs);
 }
 
 void print_jobs()
