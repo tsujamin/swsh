@@ -24,7 +24,7 @@
 pid_t * susp_jobs_pgid_stack = 0;
 int   susp_jobs_count = 0;
 
-char * SWSH_BUILT_INS[] = {"cd", "resume", "jobs", "flip", 0};
+char * SWSH_BUILT_INS[] = {"cd", "resume", "jobs", "flip","quit", 0};
 
 char SWSH_PATH[] = "/bin:/usr/bin:.";
 
@@ -51,6 +51,8 @@ int repl_eval(struct CommandEval * cmd)
             print_jobs();
         } else if (!strcmp(cmd->name, "flip")) {
             flip_jobs();
+        } else if (!strcmp(cmd->name, "quit")) {
+            exit(0);
         } else if (cmd->name) {
             ret_status = fork_eval(cmd);
         } else {
