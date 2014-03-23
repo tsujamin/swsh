@@ -3,10 +3,6 @@
  *   Benjamin Roberts 2014
  *  COMP2300 Assignment One
  */
-/*
- * Linux port requres gnu source for execvpe
- */
-#define _GNU_SOURCE
 
 #ifndef MAIN_H
 #define MAIN_H

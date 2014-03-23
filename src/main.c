@@ -63,4 +63,8 @@ void init_shell()
 
     //set completion function for readline
     rl_completion_entry_function = &swsh_autocomplete_generator;
+
+    //put hardcoded path in environ
+    setenv("PATH", SWSH_PATH, 1);
+    
 }

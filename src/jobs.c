@@ -3,7 +3,6 @@
  *  Benjamin Roberts 2014
  *  COMP2300 Assignment One
  */
-#include "main.h"
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <stdio.h>
@@ -11,6 +10,7 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
+#include "main.h"
 #include "jobs.h"
 #include "parse.h"
 #include "debug.h"
@@ -28,8 +28,6 @@ char * SWSH_BUILT_INS[] = {"cd", "resume", "jobs", "flip","quit", 0};
 
 char SWSH_PATH[] = "/bin:/usr/bin:.";
 
-char * LINUX_SWSH_PATH[] = {"/bin", "/usr/bin", ".", 0};
-
 int repl_eval(struct CommandEval * cmd)
 {
     int ret_status = 0;
@@ -42,6 +40,7 @@ int repl_eval(struct CommandEval * cmd)
         susp_jobs_pgid_stack = calloc(MAX_SUSP_JOBS, sizeof(pid_t));
         susp_jobs_names = calloc(MAX_SUSP_JOBS, sizeof(char *));
     }
+
     //iterates through commands and exec's or parses built-in
     for(; cmd; cmd = cmd->next) {
         if(!strcmp(cmd->name, "cd") && (cmd->cargs)) {
@@ -129,11 +128,7 @@ void proc_exec(struct CommandEval * cmd)
     if(!cmd->next && !cmd->background)
         tcsetpgrp(root_term, *cmd->pgid);
 
-    #ifdef __APPLE__
-        execvP(cmd->name, SWSH_PATH, cmd->vargs);
-    #elif __linux__
-        execvpe(cmd->name, cmd->vargs, LINUX_SWSH_PATH);
-    #endif
+    execvp(cmd->name, cmd->vargs);
 }
 
 void print_jobs()
@@ -188,12 +183,14 @@ int fg_wait_job(pid_t pgid, char * name)
 
     //wait and suspend if stopped
     waitpid(-pgid, &child_status, WUNTRACED);
+
+    //take back terminal
+    tcsetpgrp(root_term, root_pgid);
+
     if(WIFSTOPPED(child_status)) {
         suspend_job(pgid, name);
         return 1;
     }
-    //take back terminal
-    tcsetpgrp(root_term, root_pgid);
 
     return 0;
 }
