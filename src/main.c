@@ -61,6 +61,6 @@ void init_shell()
     tcsetpgrp(STDIN_FILENO, root_pgid);
     tcgetattr (STDIN_FILENO, &termios_modes);
 
-    //save default and set completion function for readline
+    //set completion function for readline
     rl_completion_entry_function = &swsh_autocomplete_generator;
 }

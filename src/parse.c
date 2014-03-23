@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <dirent.h>
 #include <readline/readline.h>
 #include "parse.h"
 #include "jobs.h"
@@ -24,8 +25,15 @@ struct CommandEval * repl_read(int status)
 {
     char * buffer;
     struct CommandEval * cmd;
+
+    //read line, check for EOF and empty line
     if(!(buffer = readline(get_prompt(status))))
         exit(0);
+    else {
+        int buffer_len = strlen(buffer);
+        if(!buffer_len || buffer_len == delim_count(buffer, ' '))
+            return repl_read(1);
+    }
 
     if(DEBUG)
         printf("DEBUG (repl_read): %s\n", buffer);
@@ -142,12 +150,25 @@ char * swsh_autocomplete_generator(const char * text, int state) {
     //cross call variables
     static char ** builtin_state;
     static int text_length;
+    static char * path_copy;
+    static DIR *dirp;
+    static char * path_dir;
+
+    struct dirent dir_entry, * dir_entryp;
 
     //initialise cross call variables if first call
     if(!state) {
         rl_set_prompt(ERROR_PROMPT);
+
+        //builtin search
         builtin_state = SWSH_BUILT_INS;
         text_length = strlen(text);
+
+        //path search
+        path_copy = malloc(strlen(SWSH_PATH)+1);
+        strcpy(path_copy, SWSH_PATH);
+        path_dir = strtok(path_copy, ":");
+        dirp = opendir(path_dir);
     }
 
     //check for built-in completion
@@ -160,7 +181,38 @@ char * swsh_autocomplete_generator(const char * text, int state) {
         }
     }
 
-    return rl_filename_completion_function(text, state);
+    //check for path completion
+    do {
+        //break on null dir
+        if (!dirp) {
+            closedir(dirp);
+            break;
+        }
+
+        //loop through entries checking for null dir_entryp
+        readdir_r(dirp, &dir_entry, &dir_entryp);
+        for (; dir_entryp; readdir_r(dirp, &dir_entry, &dir_entryp)) {
+            //break on . and .. directories
+            if(!strcmp(dir_entry.d_name, ".")
+                   || !strcmp(dir_entry.d_name, "..")){
+                continue;
+            }
+
+            if(!strncmp(text, dir_entry.d_name, text_length)) {
+                char * ret_str = malloc(strlen(dir_entry.d_name));
+                strcpy(ret_str, dir_entry.d_name);
+                return ret_str;
+            }
+        }
+        closedir(dirp);
+        path_dir = strtok(0, ":");
+
+    } while (path_dir && (dirp = opendir(path_dir)));
+
+    //free out copy of the path
+    free(path_copy);
+
+    return 0;
 }
 
 
