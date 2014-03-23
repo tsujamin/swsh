@@ -174,7 +174,7 @@ char * swsh_autocomplete_generator(const char * text, int state) {
     //check for built-in completion
     for(char ** builtin = builtin_state; *builtin; builtin++) {
         if(!strncmp(text, *builtin, text_length)) {
-            char * ret_str = malloc(strlen(*builtin));
+            char * ret_str = malloc(strlen(*builtin)+1);
             strcpy(ret_str, *builtin);
             builtin_state = builtin + 1; //store current pos for next call
             return ret_str;
@@ -199,7 +199,7 @@ char * swsh_autocomplete_generator(const char * text, int state) {
             }
 
             if(!strncmp(text, dir_entry.d_name, text_length)) {
-                char * ret_str = malloc(strlen(dir_entry.d_name));
+                char * ret_str = malloc(strlen(dir_entry.d_name)+1);
                 strcpy(ret_str, dir_entry.d_name);
                 return ret_str;
             }
