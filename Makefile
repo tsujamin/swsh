@@ -19,7 +19,7 @@ $(OUT_BIN): $(OBJ_FILES)
 	
 bin/%.o: src/%.c
 	@echo Swag-piling $<
-	@ $(CC) $(CFLAGS) -c $< -o $@ $(INCLUDES) $(LIBRARIES)
+	@ $(CC) $(CFLAGS) -c $< -o $@ $(INCLUDES)
 
 clean:
 	@rm $(OBJ_FILES)
