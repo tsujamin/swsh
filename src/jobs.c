@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <stdio.h>
+#include <termios.h>
 #include <unistd.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -184,8 +185,9 @@ int fg_wait_job(pid_t pgid, char * name)
     //wait and suspend if stopped
     waitpid(-pgid, &child_status, WUNTRACED);
 
-    //take back terminal
+    //take back terminal and reset to default modes
     tcsetpgrp(root_term, root_pgid);
+    tcsetattr(root_term, TCSANOW, &termios_modes);
 
     if(WIFSTOPPED(child_status)) {
         suspend_job(pgid, name);

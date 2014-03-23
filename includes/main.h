@@ -7,12 +7,14 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include<sys/types.h>
+
 /*
  * Externally accessible properties of the root
  * shell process.
  */
 extern int root_pgid, root_term;
-
+extern struct termios termios_modes;
 /*
  * Main call of the shell, contains the REPL loop
  */
