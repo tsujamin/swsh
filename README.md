@@ -27,6 +27,8 @@ A number of features you'd expect a command line shell to exhibit have been impl
  + stdin/stdout piping of commands
 
  + Stack based job control (suspension and resuming of jobs)
+ 
+ + GNU/Bash readline based input (with custom completion)
 
 
 using swsh
@@ -55,6 +57,7 @@ optional extensions of swsh
 
 ###Job control
 
+###Completion
 
 
 limitations and bugs

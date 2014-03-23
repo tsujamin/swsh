@@ -8,19 +8,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <readline/readline.h>
 #include "parse.h"
+#include "jobs.h"
 #include "debug.h"
 
-#define INPUT_BUFFER_SIZE 80
+/*
+ * Define the various prompts the shell returns
+ */
+char SUCCESS_PROMPT[] = ">>> ";
+char FAIL_PROMPT[] = "!!! ";
+char ERROR_PROMPT[] = "??? ";
 
-struct CommandEval * repl_read()
+struct CommandEval * repl_read(int status)
 {
-    char input_buffer[INPUT_BUFFER_SIZE];
+    char * input_buffer;
 
-    if(!fgets(input_buffer, 80, stdin))
+    if(!(input_buffer = readline(get_prompt(status))))
         exit(0);
-
-    strtok(input_buffer, "\n"); //remove trailing newline
 
     if(DEBUG)
         printf("DEBUG (repl_read): %s\n", input_buffer);
@@ -118,6 +123,16 @@ void free_command_eval(struct CommandEval * cmd)
     else
       free(cmd->pgid); //Only free the pgid on the last cmd (as it is shared)
     free(cmd);
+}
+
+char * get_prompt(int status)
+{
+    if(status == 0)
+        return SUCCESS_PROMPT;
+    else if(status > 0)
+        return FAIL_PROMPT;
+    else
+        return ERROR_PROMPT;
 }
 
 

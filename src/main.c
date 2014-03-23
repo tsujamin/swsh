@@ -27,20 +27,11 @@ int main(int argc, char * argv[])
     int eval_ret = 0;
     struct CommandEval * cmd;
 
-    printf(">>> ");
-
     //Read-Print-Eval loop
     while(1) {
-        cmd = repl_read();
+        cmd = repl_read(eval_ret);
         eval_ret = repl_eval(cmd);
         free_command_eval(cmd);
-
-        if (eval_ret < 0)
-            printf("??? ");
-        else if (eval_ret > 0)
-            printf("!!! ");
-        else
-            printf(">>> ");
     }
     return 0;
 }

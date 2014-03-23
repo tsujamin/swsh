@@ -20,9 +20,11 @@ struct CommandEval {
 
 /*
  * entry point for the read stage of the repl loop.
- * returns a CommandEval stuct.
+ * returns a CommandEval stuct. Takes a parameter
+ * "status" that switches the prompt to reflect
+ * the last commands exit status.
  */
-struct CommandEval * repl_read();
+struct CommandEval * repl_read(int status);
 
 /*
  * parses command line input tokenising it on '|' and
@@ -54,6 +56,12 @@ void print_command_eval(struct CommandEval *cmd);
  * counterparts
  */
 void free_command_eval(struct CommandEval * cmd);
+
+/*
+ * Returns the correct prompt string based on the provided status.
+ * Prompts are defined in parse.c
+ */
+char * get_prompt(int status);
 
 #endif /* PARSE_H */
 

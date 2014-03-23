@@ -7,6 +7,13 @@
 #define JOBS_H
 #include "parse.h"
 
+
+/*
+ * A null terminated array of command's supplied by (ie
+ * not to be exec'd) the swsh
+ */
+extern char * SWSH_BUILT_INS[];
+
 /*
  * Base function of the eval stage of the read-eval-print loop.
  * handles built-ins

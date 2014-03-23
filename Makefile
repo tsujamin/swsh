@@ -9,12 +9,12 @@ OUT_BIN = swsh
 #Sources
 SRC_FILES = $(shell ls src) 
 OBJ_FILES = $(SRC_FILES:%.c=bin/%.o)
-INCLUDES = -I./includes
-
+INCLUDES = -I./includes -I/usr/include
+LIBRARIES = -lreadline
 
 $(OUT_BIN): $(OBJ_FILES)
 	@echo Swag-piling $(OUT_BIN)
-	@ $(CC) $(CFLAGS) $(INCLUDES) -o $(OUT_BIN) $(OBJ_FILES)
+	@ $(CC) $(CFLAGS) $(INCLUDES) $(LIBRARIES) -o $(OUT_BIN) $(OBJ_FILES)
 	@echo Swag-linked
 	
 bin/%.o: src/%.c
