@@ -4,3 +4,4 @@
 
  + small (const 5 byte) memory leak in readline rl_set_prompt().
 
+ + Uses execvP (osx) and not execvpe (linux)

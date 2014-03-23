@@ -28,6 +28,8 @@ char * SWSH_BUILT_INS[] = {"cd", "resume", "jobs", "flip", 0};
 
 char SWSH_PATH[] = "/bin:/usr/bin:.";
 
+char * LINUX_SWSH_PATH[] = {"/bin", "/usr/bin", ".", 0};
+
 int repl_eval(struct CommandEval * cmd)
 {
     int ret_status = 0;
@@ -124,7 +126,11 @@ void proc_exec(struct CommandEval * cmd)
     if(!cmd->next && !cmd->background)
         tcsetpgrp(root_term, *cmd->pgid);
 
-    execvP(cmd->name, SWSH_PATH, cmd->vargs);
+    #ifdef __APPLE__
+        execvP(cmd->name, SWSH_PATH, cmd->vargs);
+    #elif __linux__
+        execvpe(cmd->name, cmd->vargs, LINUX_SWSH_PATH);
+    #endif
 }
 
 void print_jobs()
