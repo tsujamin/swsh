@@ -14,12 +14,12 @@ LIBRARIES = -lreadline
 
 $(OUT_BIN): $(OBJ_FILES)
 	@echo Swag-piling $(OUT_BIN)
-	@ $(CC) $(CFLAGS) $(INCLUDES) $(LIBRARIES) -o $(OUT_BIN) $(OBJ_FILES)
+	@ $(CC) $(CFLAGS) -o $(OUT_BIN) $(OBJ_FILES) $(INCLUDES) $(LIBRARIES)
 	@echo Swag-linked
 	
 bin/%.o: src/%.c
 	@echo Swag-piling $<
-	@ $(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	@ $(CC) $(CFLAGS) -c $< -o $@ $(INCLUDES) $(LIBRARIES)
 
 clean:
 	@rm $(OBJ_FILES)
