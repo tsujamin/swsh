@@ -66,6 +66,10 @@ void resume_job();
  */
 void suspend_job(pid_t pgid);
 
+/*
+ * Flips the order of jobs on the stack
+ */
+void flip_jobs();
 
 #endif /* JOBS_H */
 

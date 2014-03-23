@@ -21,10 +21,10 @@
  * is suspended is added to this array (if doing so doesnt overflow.
  */
 #define MAX_SUSP_JOBS 10
-pid_t susp_jobs[MAX_SUSP_JOBS];
+pid_t * susp_jobs_pgid_stack = 0;
 int   susp_jobs_count = 0;
 
-char * SWSH_BUILT_INS[] = {"cd", "resume", "jobs", 0};
+char * SWSH_BUILT_INS[] = {"cd", "resume", "jobs", "flip", 0};
 
 char SWSH_PATH[] = "/bin:/usr/bin:.";
 
@@ -35,6 +35,10 @@ int repl_eval(struct CommandEval * cmd)
     if (DEBUG)
         print_command_eval(cmd);
 
+    //initialise jobs stack
+    if (!susp_jobs_pgid_stack)
+        susp_jobs_pgid_stack = calloc(MAX_SUSP_JOBS, sizeof(pid_t));
+
     //iterates through commands and exec's or parses built-in
     for(; cmd; cmd = cmd->next) {
         if(!strcmp(cmd->name, "cd") && (cmd->cargs)) {
@@ -43,6 +47,8 @@ int repl_eval(struct CommandEval * cmd)
             resume_job();
         } else if (!strcmp(cmd->name, "jobs")) {
             print_jobs();
+        } else if (!strcmp(cmd->name, "flip")) {
+            flip_jobs();
         } else if (cmd->name) {
             ret_status = fork_eval(cmd);
         } else {
@@ -126,7 +132,7 @@ void print_jobs()
     if(susp_jobs_count > 0) {
         //iterate through job list in descending order
         for(int i = susp_jobs_count - 1; i >= 0; i--)
-            printf("%d\n", susp_jobs[i]);
+            printf("%d\n", susp_jobs_pgid_stack[i]);
     } else {
         printf("No jobs in stack\n");
     }
@@ -135,9 +141,9 @@ void print_jobs()
 
 void suspend_job(pid_t pgid)
 {
-    //add job to susp_jobs list before inc'ing count
+    //add job to susp_jobs_pgid_stack list before inc'ing count
     if(susp_jobs_count < MAX_SUSP_JOBS) {
-        susp_jobs[susp_jobs_count] = pgid;
+        susp_jobs_pgid_stack[susp_jobs_count] = pgid;
         susp_jobs_count++;
     } else {
         printf("Job stack full\n");
@@ -150,8 +156,8 @@ void resume_job()
         susp_jobs_count--; //pop job
 
         //continue job and foreground wait it
-        kill (susp_jobs[susp_jobs_count], SIGCONT);
-        fg_wait_job(susp_jobs[susp_jobs_count]);
+        kill (susp_jobs_pgid_stack[susp_jobs_count], SIGCONT);
+        fg_wait_job(susp_jobs_pgid_stack[susp_jobs_count]);
     } else {
         printf("No jobs in stack\n");
     }
@@ -171,6 +177,20 @@ void fg_wait_job(pid_t pgid)
 
     //take back terminal
     tcsetpgrp(root_term, root_pgid);
+}
+
+void flip_jobs()
+{
+    pid_t * new_jobs_stack = calloc(MAX_SUSP_JOBS, sizeof(pid_t));
+
+    //flip the job stack into new array
+    for (int i = 1; i <= susp_jobs_count; i++)
+        new_jobs_stack[i-1] = susp_jobs_pgid_stack[susp_jobs_count - i];
+
+    //replace old stack
+    free(susp_jobs_pgid_stack);
+    susp_jobs_pgid_stack = new_jobs_stack;
+    printf("Flipped jobs stack\n");
 }
 
 
