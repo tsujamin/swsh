@@ -63,6 +63,13 @@ void free_command_eval(struct CommandEval * cmd);
  */
 char * get_prompt(int status);
 
+/*
+ * Custom readline autocompleter which adds path searching
+ * and builtin searching. Defaults to the readline file autocompleter
+ * if a command cannot be resolved.
+ */
+char * swsh_autocomplete_generator(const char * text, int state);
+
 #endif /* PARSE_H */
 
 

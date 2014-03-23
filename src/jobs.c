@@ -24,7 +24,7 @@
 pid_t susp_jobs[MAX_SUSP_JOBS];
 int   susp_jobs_count = 0;
 
-char * SWSH_BUILT_INS[4] = {"cd", "resume", "jobs", 0};
+char * SWSH_BUILT_INS[] = {"cd", "resume", "jobs", 0};
 
 
 int repl_eval(struct CommandEval * cmd)

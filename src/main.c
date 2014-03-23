@@ -6,14 +6,17 @@
 
 #include <sys/types.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <termios.h>
 #include <signal.h>
+#include <readline/readline.h>
 #include "main.h"
 #include "debug.h"
 #include "jobs.h"
 #include "flags.h"
+#include "parse.h"
 
 
 int root_pgid, root_term;
@@ -57,4 +60,7 @@ void init_shell()
     //Take control of the terminal
     tcsetpgrp(STDIN_FILENO, root_pgid);
     tcgetattr (STDIN_FILENO, &termios_modes);
+
+    //save default and set completion function for readline
+    rl_completion_entry_function = &swsh_autocomplete_generator;
 }

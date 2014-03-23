@@ -22,15 +22,17 @@ char ERROR_PROMPT[] = "??? ";
 
 struct CommandEval * repl_read(int status)
 {
-    char * input_buffer;
-
-    if(!(input_buffer = readline(get_prompt(status))))
+    char * buffer;
+    struct CommandEval * cmd;
+    if(!(buffer = readline(get_prompt(status))))
         exit(0);
 
     if(DEBUG)
-        printf("DEBUG (repl_read): %s\n", input_buffer);
+        printf("DEBUG (repl_read): %s\n", buffer);
 
-    return init_job(input_buffer);
+    cmd = init_job(buffer);
+    free(buffer);
+    return cmd;
 }
 
 struct CommandEval * init_job(char input_buffer[])
@@ -133,6 +135,32 @@ char * get_prompt(int status)
         return FAIL_PROMPT;
     else
         return ERROR_PROMPT;
+}
+
+
+char * swsh_autocomplete_generator(const char * text, int state) {
+    //cross call variables
+    static char ** builtin_state;
+    static int text_length;
+
+    //initialise cross call variables if first call
+    if(!state) {
+        rl_set_prompt(ERROR_PROMPT);
+        builtin_state = SWSH_BUILT_INS;
+        text_length = strlen(text);
+    }
+
+    //check for built-in completion
+    for(char ** builtin = builtin_state; *builtin; builtin++) {
+        if(!strncmp(text, *builtin, text_length)) {
+            char * ret_str = malloc(strlen(*builtin));
+            strcpy(ret_str, *builtin);
+            builtin_state = builtin + 1; //store current pos for next call
+            return ret_str;
+        }
+    }
+
+    return rl_filename_completion_function(text, state);
 }
 
 
