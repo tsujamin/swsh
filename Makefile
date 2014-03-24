@@ -12,10 +12,14 @@ OBJ_FILES = $(SRC_FILES:%.c=bin/%.o)
 INCLUDES = -I. -I/usr/include
 LIBRARIES = -lreadline
 
+default: prepare $(OUT_BIN) 
+
 $(OUT_BIN): $(OBJ_FILES)
 	@echo Compiling $(OUT_BIN)
 	@ $(CC) $(CFLAGS) -o $(OUT_BIN) $(OBJ_FILES) $(INCLUDES) $(LIBRARIES)
 	@echo Linked
+prepare:
+	@mkdir bin
 	
 bin/%.o: %.c
 	@echo Compiling $<
