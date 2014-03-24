@@ -4,7 +4,7 @@ CC = gcc
 CFLAGS = -g -Wall -std=gnu99
 
 #Executable name
-OUT_BIN = swsh
+OUT_BIN = myshell
 
 #Sources
 SRC_FILES = $(shell ls *.c) 
@@ -13,24 +13,23 @@ INCLUDES = -I. -I/usr/include
 LIBRARIES = -lreadline
 
 $(OUT_BIN): $(OBJ_FILES)
-	@echo Swag-piling $(OUT_BIN)
+	@echo Compiling $(OUT_BIN)
 	@ $(CC) $(CFLAGS) -o $(OUT_BIN) $(OBJ_FILES) $(INCLUDES) $(LIBRARIES)
-	@echo Swag-linked
+	@echo Linked
 	
 bin/%.o: %.c
-	@echo Swag-piling $<
+	@echo Compiling $<
 	@ $(CC) $(CFLAGS) -c $< -o $@ $(INCLUDES)
 
 clean:
 	@rm $(OBJ_FILES)
 	@rm $(OUT_BIN)
-	@echo No one shell
-	@echo Should have all that swagger
+	@echo Build directory cleaned
 	
 install: $(OUT_BIN)
-	@echo Swag-stalling $(OUT_BIN)
+	@echo Installing $(OUT_BIN)
 	@cp $< /usr/bin/$(OUT_BIN)
 
 uninstall:
-	@echo Swag-moving $(OUT_BIN)
+	@echo Uninstalling $(OUT_BIN)
 	@rm /usr/bin/$(OUT_BIN)
