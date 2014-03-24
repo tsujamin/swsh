@@ -7,9 +7,9 @@ CFLAGS = -g -Wall -std=gnu99
 OUT_BIN = swsh
 
 #Sources
-SRC_FILES = $(shell ls src) 
+SRC_FILES = $(shell ls *.c) 
 OBJ_FILES = $(SRC_FILES:%.c=bin/%.o)
-INCLUDES = -I./includes -I/usr/include
+INCLUDES = -I. -I/usr/include
 LIBRARIES = -lreadline
 
 $(OUT_BIN): $(OBJ_FILES)
@@ -17,7 +17,7 @@ $(OUT_BIN): $(OBJ_FILES)
 	@ $(CC) $(CFLAGS) -o $(OUT_BIN) $(OBJ_FILES) $(INCLUDES) $(LIBRARIES)
 	@echo Swag-linked
 	
-bin/%.o: src/%.c
+bin/%.o: %.c
 	@echo Swag-piling $<
 	@ $(CC) $(CFLAGS) -c $< -o $@ $(INCLUDES)
 
