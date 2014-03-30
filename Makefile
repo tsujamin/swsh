@@ -12,6 +12,8 @@ OBJ_FILES = $(SRC_FILES:%.c=bin/%.o)
 INCLUDES = -I./includes -I/usr/include
 LIBRARIES = -lreadline
 
+default: prepare $(OUT_BIN) 
+
 $(OUT_BIN): $(OBJ_FILES)
 	@echo Swag-piling $(OUT_BIN)
 	@ $(CC) $(CFLAGS) -o $(OUT_BIN) $(OBJ_FILES) $(INCLUDES) $(LIBRARIES)
@@ -34,3 +36,6 @@ install: $(OUT_BIN)
 uninstall:
 	@echo Swag-moving $(OUT_BIN)
 	@rm /usr/bin/$(OUT_BIN)
+
+prepare: 
+	@mkdir bin
